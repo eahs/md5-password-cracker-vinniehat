@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace PasswordCracker
 {
@@ -34,6 +35,14 @@ namespace PasswordCracker
                 return sb.ToString();
             }
         }
+
+
+        public static string convertArrayToString(string[] input)
+        {
+            string output = string.Join(",", input);
+            output = output.Replace(",", "");
+            return output;
+        }
         
         static void Main(string[] args)
         {
@@ -44,11 +53,11 @@ namespace PasswordCracker
                 "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
             };
             Console.WriteLine("MD5 Password Cracker v1.0");
-            
+            // Thread t1 = new Thread(new ThreadStart());
             foreach (var pass in hashedPasswords)
             {
                 string[] tempPass = new string[5];
-                string tempPassString;
+                string tempPassString = "";
                 for (int a = 0; a < alphabet.Length; a++)
                 {
                     for (int b = 0; b < alphabet.Length; b++)
@@ -59,44 +68,38 @@ namespace PasswordCracker
                             {
                                 for (int e = 0; e < alphabet.Length; e++)
                                 {
-                                    tempPassString = string.Join(",", tempPass);
-                                    tempPassString = tempPassString.Replace(",", ""); 
+                                    tempPassString = convertArrayToString(tempPass);
                                     if (md5(tempPassString) != pass)
                                     {
                                         tempPass[4] = alphabet[e];
                                     }
                                 }
-                                tempPassString = string.Join(",", tempPass);
-                                tempPassString = tempPassString.Replace("," , "");
-
+                                tempPassString = convertArrayToString(tempPass);
                                 if (md5(tempPassString) != pass)
                                 {
                                     tempPass[3] = alphabet[d];
                                 }
                             }
-                            tempPassString = string.Join(",", tempPass);
-                            tempPassString = tempPassString.Replace(",", "");
+                            tempPassString = convertArrayToString(tempPass);
                             if (md5(tempPassString) != pass)
                             {
                                 tempPass[2] = alphabet[c];
                             }
                         }
-                        tempPassString = string.Join(",", tempPass);
-                        tempPassString = tempPassString.Replace(",", "");
+                        tempPassString = convertArrayToString(tempPass);
                         if (md5(tempPassString) != pass)
                         {
                             tempPass[1] = alphabet[b];
                         }
                     }
 
-                    tempPassString = string.Join(",", tempPass);
-                    tempPassString = tempPassString.Replace(",", "");
+                    tempPassString = convertArrayToString(tempPass);
                     if (md5(tempPassString) != pass)
                     {
                         tempPass[0] = alphabet[a];
                     }
                 }
-                Console.WriteLine(pass);
+                Console.WriteLine(tempPassString + " - " + pass);
             }
 
             // Use this method to test if you managed to correctly crack all the passwords
