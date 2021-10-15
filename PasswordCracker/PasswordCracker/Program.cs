@@ -47,8 +47,7 @@ namespace PasswordCracker
         static void Main(string[] args)
         {
             string[] hashedPasswords = File.ReadAllLines("passwords_hashed.txt");
-            string[] commonPasswords = File.ReadAllLines("common_passwords.txt");
-            string[] crackedPasswords = new string[0];
+            string[] crackedPasswords = new string[hashedPasswords.Length];
             string[] alphabet = new string[]
             {
                 "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
@@ -59,69 +58,56 @@ namespace PasswordCracker
             {
                 string[] tempPass = new string[5];
                 string tempPassString = "";
-
-                for (int i = 0; i < commonPasswords.Length; i++)
+                for (int a = 0; a < alphabet.Length; a++)
                 {
-                    string hash = md5(commonPasswords[i]);
-                    if (hash == pass)
+                    for (int b = 0; b < alphabet.Length; b++)
                     {
-                        Array.Resize(ref crackedPasswords, crackedPasswords.Length + 1);
-                        crackedPasswords[crackedPasswords.Length - 1] = commonPasswords[i];
-                        hashedPasswords = hashedPasswords.Where(e => e != hash).ToArray();
+                        for (int c = 0; c < alphabet.Length; c++)
+                        {
+                            for (int d = 0; d < alphabet.Length; d++)
+                            {
+                                for (int e = 0; e < alphabet.Length; e++)
+                                {
+                                    tempPassString = convertArrayToString(tempPass);
+                                    if (md5(tempPassString) != pass)
+                                    {
+                                        tempPass[4] = alphabet[e];
+                                    }
+                                }
+                                tempPassString = convertArrayToString(tempPass);
+                                if (md5(tempPassString) != pass)
+                                {
+                                    tempPass[3] = alphabet[d];
+                                }
+                            }
+                            tempPassString = convertArrayToString(tempPass);
+                            if (md5(tempPassString) != pass)
+                            {
+                                tempPass[2] = alphabet[c];
+                            }
+                        }
+                        tempPassString = convertArrayToString(tempPass);
+                        if (md5(tempPassString) != pass)
+                        {
+                            tempPass[1] = alphabet[b];
+                        }
+                    }
+
+                    tempPassString = convertArrayToString(tempPass);
+                    if (md5(tempPassString) != pass)
+                    {
+                        tempPass[0] = alphabet[a];
                     }
                 }
-
-                // for (int a = 0; a < alphabet.Length; a++)
-                // {
-                //     for (int b = 0; b < alphabet.Length; b++)
-                //     {
-                //         for (int c = 0; c < alphabet.Length; c++)
-                //         {
-                //             for (int d = 0; d < alphabet.Length; d++)
-                //             {
-                //                 for (int e = 0; e < alphabet.Length; e++)
-                //                 {
-                //                     tempPassString = convertArrayToString(tempPass);
-                //                     if (md5(tempPassString) != pass)
-                //                     {
-                //                         tempPass[4] = alphabet[e];
-                //                     }
-                //                 }
-                //                 tempPassString = convertArrayToString(tempPass);
-                //                 if (md5(tempPassString) != pass)
-                //                 {
-                //                     tempPass[3] = alphabet[d];
-                //                 }
-                //             }
-                //             tempPassString = convertArrayToString(tempPass);
-                //             if (md5(tempPassString) != pass)
-                //             {
-                //                 tempPass[2] = alphabet[c];
-                //             }
-                //         }
-                //         tempPassString = convertArrayToString(tempPass);
-                //         if (md5(tempPassString) != pass)
-                //         {
-                //             tempPass[1] = alphabet[b];
-                //         }
-                //     }
-                //
-                //     tempPassString = convertArrayToString(tempPass);
-                //     if (md5(tempPassString) != pass)
-                //     {
-                //         tempPass[0] = alphabet[a];
-                //     }
-                // }
+                Console.WriteLine(tempPassString + " - " + pass);
             }
 
             // Use this method to test if you managed to correctly crack all the passwords
             // Note that hashedPasswords will need to be swapped out with an array the exact
             // same length that contains all the cracked passwords
-            bool passwordsValidated = Validator.ValidateResults(crackedPasswords);
+            bool passwordsValidated = Validator.ValidateResults(hashedPasswords);
             
             Console.WriteLine($"\nPasswords successfully cracked: {passwordsValidated}");
-            
-            Console.WriteLine(crackedPasswords.Length);
         }
     }
 }
