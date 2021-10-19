@@ -48,64 +48,43 @@ namespace PasswordCracker
         {
             string[] hashedPasswords = File.ReadAllLines("passwords_hashed.txt");
             string[] crackedPasswords = new string[hashedPasswords.Length];
+            Dictionary<string, string> generatedPasswords = new Dictionary<string, string>();
             string[] alphabet = new string[]
             {
                 "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
             };
             Console.WriteLine("MD5 Password Cracker v1.0");
             // Thread t1 = new Thread(new ThreadStart());
-            foreach (var pass in hashedPasswords)
-            {
-                string[] tempPass = new string[5];
-                string tempPassString = "";
-                for (int a = 0; a < alphabet.Length; a++)
-                {
-                    for (int b = 0; b < alphabet.Length; b++)
-                    {
-                        for (int c = 0; c < alphabet.Length; c++)
-                        {
-                            for (int d = 0; d < alphabet.Length; d++)
-                            {
-                                for (int e = 0; e < alphabet.Length; e++)
-                                {
-                                    tempPassString = convertArrayToString(tempPass);
-                                    if (md5(tempPassString) != pass)
-                                    {
-                                        tempPass[4] = alphabet[e];
-                                    }
-                                }
-                                tempPassString = convertArrayToString(tempPass);
-                                if (md5(tempPassString) != pass)
-                                {
-                                    tempPass[3] = alphabet[d];
-                                }
-                            }
-                            tempPassString = convertArrayToString(tempPass);
-                            if (md5(tempPassString) != pass)
-                            {
-                                tempPass[2] = alphabet[c];
-                            }
-                        }
-                        tempPassString = convertArrayToString(tempPass);
-                        if (md5(tempPassString) != pass)
-                        {
-                            tempPass[1] = alphabet[b];
-                        }
-                    }
 
-                    tempPassString = convertArrayToString(tempPass);
-                    if (md5(tempPassString) != pass)
+            for (int a = 0; a < alphabet.Length; a++)
+            {
+                for (int b = 0; b < alphabet.Length; b++)
+                {
+                    for (int c = 0; c < alphabet.Length; c++)
                     {
-                        tempPass[0] = alphabet[a];
+                        for (int d = 0; d < alphabet.Length; d++)
+                        {
+                            for (int e = 0; e < alphabet.Length; e++)
+                            {
+                                var pass = alphabet[a] + alphabet[b] + alphabet[c] + alphabet[d] + alphabet[e];
+                                generatedPasswords.Add(md5(pass), pass);
+                            }
+                        }
                     }
                 }
-                Console.WriteLine(tempPassString + " - " + pass);
             }
 
+            for (int i = 0; i < hashedPasswords.Length; i++)
+            {
+                if (generatedPasswords.ContainsKey(hashedPasswords[i]))
+                {
+                    crackedPasswords[i] = generatedPasswords[hashedPasswords[i]];
+                }
+            }
             // Use this method to test if you managed to correctly crack all the passwords
             // Note that hashedPasswords will need to be swapped out with an array the exact
             // same length that contains all the cracked passwords
-            bool passwordsValidated = Validator.ValidateResults(hashedPasswords);
+            bool passwordsValidated = Validator.ValidateResults(crackedPasswords);
             
             Console.WriteLine($"\nPasswords successfully cracked: {passwordsValidated}");
         }
